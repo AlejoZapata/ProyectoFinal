@@ -4,7 +4,7 @@
 #define Ancho_jugador_up 24
 #define Alto_jugador_up 32
 #define Ancho_jugador_down 40
-#define Alto_jugador_down 16
+#define Alto_jugador_down 36
 #define Pos_sprite_Jugador_x 40
 #define Pos_sprite_Jugador_y 6
 #define total_sprites_jugador 3
@@ -32,6 +32,7 @@ public:
     void setAceleraciony(int aceleracionY);
     void setvelocityx(int velocityx);
     void setvelocityy(int velocityy);
+    void setfloor(int piso_act);
     void setmodoSigilo();
     bool isModoSigilo();
 private:
@@ -42,7 +43,8 @@ private:
     void cinematica();
     bool isJumping, modoSigilo;
     void jump();
-    int aceleracionx, aceleraciony, scale;
+    int aceleracionx, aceleraciony, scale, currentFloor;
+    std::vector<qreal> groundLevels;
     QTimer *timer;
     void applyGravity();
 };

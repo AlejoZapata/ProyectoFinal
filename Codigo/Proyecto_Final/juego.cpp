@@ -5,12 +5,14 @@ Juego::Juego()
     Agregar_Jugador();
     scale=2;
     crear_Mapa();
+    Asignar_posicion_puerta();
     set_background(":/Sprites/Fondo prision.jpeg",scale);
 }
 
 Juego::~Juego()
 {
     delete p_pal;
+    delete interactuar;
 }
 
 void Juego::Agregar_Jugador()
@@ -22,6 +24,28 @@ void Juego::Agregar_Jugador()
     p_pal->posicionar(40,170);
     setFocusItem(p_pal);
 }
+
+void Juego::Asignar_posicion_puerta()
+{
+    Agregar_Puertas(535, 90, 735, 90, 0);
+    Agregar_Puertas(735, 90, 535, 90, 0);
+    Agregar_Puertas(1145, 90, 1145, 345, 1);
+    Agregar_Puertas(1145, 345, 1145, 90, 0);
+    Agregar_Puertas(735, 345, 535, 345, 1);
+    Agregar_Puertas(535, 345, 735, 345, 1);
+}
+
+void Juego::Agregar_Puertas(int origenX, int origenY, int destinoX, int destinoY, int piso)
+{
+    iterables* puerta = new iterables;
+    puerta->setPos(origenX, origenY);
+    puerta->ElegirSprite(0, 0);
+    addItem(puerta);
+    puertas.push_back(puerta);
+    destinos.push_back(QPointF(destinoX, destinoY));
+    pisos.push_back(piso);
+}
+
 
 void Juego::crear_Mapa()
 {
@@ -109,6 +133,20 @@ void Juego::keyPressEvent(QKeyEvent *event)
             p_pal->ActualizarMovimiento(2);
             if (ComprobarColision(p_pal, 2, Ancho_bloque_1, Alto_bloque_1)) {
                 p_pal->move_jugador(2);
+            }
+            break;
+        case Qt::Key_E:
+            for (size_t i = 0; i < puertas.size(); i++) {
+                iterables* puerta = puertas[i];
+                if (p_pal->collidesWithItem(puerta)) {
+                    QPointF destino = destinos[i];
+                    int piso = pisos[i];
+                    int destinoX = static_cast<int>(destino.x());
+                    int destinoY = static_cast<int>(destino.y() + 80);
+                    p_pal->setfloor(piso);
+                    p_pal->posicionar(destinoX, destinoY);
+                    break;
+                }
             }
             break;
         case Qt::Key_C:

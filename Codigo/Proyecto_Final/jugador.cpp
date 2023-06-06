@@ -14,7 +14,9 @@ Jugador::Jugador()
     scale=3;
     velocityY = 0;
     velocityX = 0;
+    groundLevels = {170, 425, 370};
     T=0.2;
+    currentFloor = 0;
     isJumping = false;
     aceleracionx = 0;
     aceleraciony = 0 ;
@@ -66,8 +68,8 @@ void Jugador::ElegirSprite(int x, int y)
     setImage();
     }
     else{
-        *Movimiento=Personaje->copy(x*Ancho_jugador_down,y*36,
-                                  Ancho_jugador_down,32);
+        *Movimiento=Personaje->copy(x*Ancho_jugador_down,y*Alto_jugador_down,
+                                  Ancho_jugador_down,Alto_jugador_down);
     setImage();
     }
 }
@@ -139,6 +141,7 @@ void Jugador::setvelocityy(int velocityy)
     this->velocityY=velocityy;
 }
 
+
 void Jugador::setmodoSigilo()
 {
     modoSigilo = !modoSigilo;
@@ -159,6 +162,12 @@ void Jugador::cinematica()
     setPos(posx,posy);
 }
 
+void Jugador::setfloor(int piso_act)
+{
+    this->currentFloor=piso_act;
+}
+
+
 void Jugador::applyGravity()
 {
     cinematica();
@@ -167,7 +176,7 @@ void Jugador::applyGravity()
         aceleracionx = 0;
     }
 
-    const qreal groundLevel = 170;
+    qreal groundLevel = groundLevels[currentFloor]; // Obtener el groundLevel del piso actual
     if (y() >= groundLevel) {
         setY(groundLevel);
         velocityY = 0;

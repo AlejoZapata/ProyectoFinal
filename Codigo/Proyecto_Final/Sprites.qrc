@@ -3,5 +3,7 @@
         <file>Sprites.png</file>
         <file>Fondo prision.jpeg</file>
         <file>Muro_nivel_1.png</file>
+        <file>Objetos.png</file>
+        <file>Puerta.jpeg</file>
     </qresource>
 </RCC>
