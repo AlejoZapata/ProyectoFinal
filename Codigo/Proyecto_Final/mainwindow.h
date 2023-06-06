@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #define window_x_size 1366
-#define window_y_size 768
+#define window_y_size 756
 #define graphics_offset_x 0
 #define graphics_offset_y 48
 

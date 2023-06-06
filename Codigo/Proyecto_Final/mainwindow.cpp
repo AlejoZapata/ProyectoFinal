@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     srand(time(NULL));
     Escenario = new Juego;
+    setGeometry(0,0,window_x_size,window_y_size);
+    ui->graphicsView->setGeometry(0,0,window_x_size,window_y_size);
     Escenario->setSceneRect(0,0,ui->graphicsView->width()-2,ui->graphicsView->height()-2);
     ui->graphicsView->setScene(Escenario);
     showMaximized();
