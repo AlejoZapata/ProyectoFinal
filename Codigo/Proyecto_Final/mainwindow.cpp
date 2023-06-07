@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    setWindowTitle("STEALTH EXTRACTION");
     ui->setupUi(this);
     srand(time(NULL));
     Escenario = new Juego;
@@ -13,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     Escenario->setSceneRect(0,0,ui->graphicsView->width()-2,ui->graphicsView->height()-2);
     ui->graphicsView->setScene(Escenario);
     showMaximized();
+    connect(Escenario, &Juego::Reiniciar, this, &MainWindow::reiniciarJuego);
 }
 
 MainWindow::~MainWindow()
@@ -20,6 +22,16 @@ MainWindow::~MainWindow()
     delete ui;
     delete Escenario;
 }
+
+void MainWindow::reiniciarJuego()
+{
+    delete Escenario;
+    Escenario = new Juego;
+    Escenario->setSceneRect(0, 0, ui->graphicsView->width() - 2, ui->graphicsView->height() - 2);
+    ui->graphicsView->setScene(Escenario);
+    showMaximized();
+}
+
 
 void MainWindow::set_window_size()
 {

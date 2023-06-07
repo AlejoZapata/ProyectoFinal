@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     disparo.cpp \
     enemigos.cpp \
+    inicio.cpp \
     iterables.cpp \
     juego.cpp \
     jugador.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 HEADERS += \
     disparo.h \
     enemigos.h \
+    inicio.h \
     iterables.h \
     juego.h \
     jugador.h \
@@ -28,6 +30,7 @@ HEADERS += \
     mapas.h
 
 FORMS += \
+    inicio.ui \
     mainwindow.ui
 
 # Default rules for deployment.

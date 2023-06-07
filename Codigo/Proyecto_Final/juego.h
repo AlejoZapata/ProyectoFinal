@@ -26,6 +26,8 @@ class Juego : public QGraphicsScene
 public:
     Juego();
     ~Juego();
+signals:
+    void Reiniciar();
 private:
     Jugador *p_pal;
     Mapa *bl_mapa[total_x_bloques][total_y_bloques];
@@ -42,7 +44,7 @@ private:
     void Asignar_objeto();
     void actualizarEnemigos();
     void Agregar_objeto(int x, int y, int tipo);
-    void Agregar_Puertas(int origenX, int origenY, int destinoX, int destinoY, int piso);
+    void Agregar_Puertas(int origenX, int origenY, int destinoX, int destinoY, int piso, int pasar);
     void Asignar_posicion_enemigos();
     void agregarDisparo(Enemigos* enemy, Disparo* disparo);
     void manejarJugadorAlcanzado();

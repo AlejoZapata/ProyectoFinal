@@ -4,6 +4,7 @@ iterables::iterables()
 {
     Puerta = new QPixmap;
     Objeto = new QPixmap;
+    rendija = new QPixmap;
     scale_p=2;
     scale_o=1.8;
     Objeto->load(":/Sprites/Objetos.png");
@@ -14,6 +15,7 @@ iterables::~iterables()
 {
     delete Puerta;
     delete Objeto;
+    delete rendija;
 }
 
 void iterables::ElegirSprite(int x, int tipo)
@@ -31,5 +33,9 @@ void iterables::setImage()
     }
     else if(object==1){
         setPixmap(Objeto->scaled(Objeto->width() * scale_o, Objeto->height() * scale_o));
+    }
+    else if (object==2){
+        rendija->load(":/Sprites/Rejilla.png");
+        setPixmap(rendija->scaled(rendija->width() * 0.2, rendija->height() * 0.2));
     }
 }

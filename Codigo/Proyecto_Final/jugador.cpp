@@ -14,7 +14,7 @@ Jugador::Jugador()
     scale=3;
     velocityY = 0;
     velocityX = 0;
-    groundLevels = {170, 425, 520};
+    groundLevels = {170, 425, 545};
     T=0.2;
     groundLevel = 170;
     currentFloor = 0;

@@ -10,5 +10,7 @@
         <file>Enemigo Izquierda.png</file>
         <file>Disparo Derecha.png</file>
         <file>Disparo Izquierda.png</file>
+        <file>Rejilla.png</file>
+        <file>Fondo_inicio.jpeg</file>
     </qresource>
 </RCC>

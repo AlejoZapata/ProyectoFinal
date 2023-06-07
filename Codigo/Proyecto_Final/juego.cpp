@@ -36,19 +36,24 @@ void Juego::Agregar_Jugador()
 
 void Juego::Asignar_posicion_puerta()
 {
-    Agregar_Puertas(535, 90, 735, 90, 0);
-    Agregar_Puertas(735, 90, 535, 90, 0);
-    Agregar_Puertas(1145, 90, 1145, 345, 1);
-    Agregar_Puertas(1145, 345, 1145, 90, 0);
-    Agregar_Puertas(735, 345, 535, 345, 1);
-    Agregar_Puertas(535, 345, 735, 345, 1);
+    Agregar_Puertas(535, 90, 735, 90, 0, 0);
+    Agregar_Puertas(735, 90, 535, 90, 0, 0);
+    Agregar_Puertas(1145, 90, 1145, 345, 1, 0);
+    Agregar_Puertas(1145, 345, 1145, 90, 0, 0);
+    Agregar_Puertas(735, 345, 535, 345, 1, 0);
+    Agregar_Puertas(535, 345, 735, 345, 1, 0);
+    Agregar_Puertas(50,440,1145,570,2,2);
+    Agregar_Puertas(1145,570,50,440,1,2);
+    Agregar_Puertas(735,570,535,570,2,2);
+    Agregar_Puertas(535,570,735,570,1,2);
+    Agregar_Puertas(50,570,735,570,1,2);
 }
 
-void Juego::Agregar_Puertas(int origenX, int origenY, int destinoX, int destinoY, int piso)
+void Juego::Agregar_Puertas(int origenX, int origenY, int destinoX, int destinoY, int piso, int pasar)
 {
     interactuar = new iterables;
     interactuar->setPos(origenX, origenY);
-    interactuar->ElegirSprite(0, 0);
+    interactuar->ElegirSprite(0, pasar);
     addItem(interactuar);
     puertas.push_back(interactuar);
     destinos.push_back(QPointF(destinoX, destinoY));
@@ -82,8 +87,10 @@ void Juego::manejarJugadorAlcanzado()
         QMessageBox::StandardButton respuesta = QMessageBox::question(widget, "¡Perdiste!", "Has perdido el juego. ¿Deseas reiniciar?",
                                                                       QMessageBox::Yes | QMessageBox::No);
         if (respuesta == QMessageBox::Yes) {
-            QMessageBox::information(nullptr, "Eres una mierda, como pierdes xD", "Augustooo");;
+            QMessageBox::information(nullptr, "Lastimosamente perdiste", "vuelve a intentarlo");;
+            emit Reiniciar();
         } else {
+            QCoreApplication::quit();
         }
     }
 }
@@ -160,20 +167,10 @@ bool Juego::ComprobarColision(QGraphicsItem *item, short dir, int Ancho, int Alt
             x1 = x;
             y1 = y + Alto * scale - 1;
             break;
-        case 1: // Abajo
-            y += Alto * scale - 1 + impy;
-            x1 = x + Ancho * scale - 1;
-            y1 = y;
-            break;
         case 2: // Derecha
             x += Ancho * scale - 1 + impx;
             x1 = x;
             y1 = y + Alto * scale - 1;
-            break;
-        case 3: // Arriba
-            y -= impy;
-            x1 = x + Ancho * scale - 1;
-            y1 = y;
             break;
         case 6:
             x -= impx;
@@ -245,9 +242,9 @@ void Juego::keyPressEvent(QKeyEvent *event)
                 p_pal->move_jugador(0);
             }
             else{
-                p_pal->setAceleracionx(0);
+                p_pal->setAceleracionx(-40);
                 p_pal->setAceleraciony(0);
-                p_pal->setvelocityx(0);
+                p_pal->setvelocityx(-40);
                 p_pal->setvelocityy(0);
             }
             break;
@@ -257,26 +254,44 @@ void Juego::keyPressEvent(QKeyEvent *event)
                 p_pal->move_jugador(2);
             }
             else{
-                p_pal->setAceleracionx(0);
+                p_pal->setAceleracionx(40);
                 p_pal->setAceleraciony(0);
-                p_pal->setvelocityx(0);
+                p_pal->setvelocityx(40);
                 p_pal->setvelocityy(0);
             }
             break;
-        case Qt::Key_E:
-            for (size_t i = 0; i < puertas.size(); i++) {
-                iterables* puerta = puertas[i];
-                if (p_pal->collidesWithItem(puerta)) {
+    case Qt::Key_E:
+        for (size_t i = 0; i < puertas.size(); i++) {
+            iterables* puerta = puertas[i];
+            if (p_pal->collidesWithItem(puerta)) {
+                if (i == puertas.size() - 1) {
+                    QWidget* widget = QApplication::activeWindow();  // Obtener el puntero al widget principal
+                    if (widget) {
+                        QMessageBox::StandardButton respuesta = QMessageBox::question(widget, "Felicidades!", "Lograste escapar de la prision sano y salvo",
+                                                                                      QMessageBox::Yes | QMessageBox::No);
+                        if (respuesta == QMessageBox::Yes) {
+                            emit Reiniciar();
+                        } else {
+                            QCoreApplication::quit();
+                        }
+                    }
+                } else {
+                    // No es la última puerta
                     QPointF destino = destinos[i];
                     int piso = pisos[i];
                     int destinoX = static_cast<int>(destino.x());
                     int destinoY = static_cast<int>(destino.y() + 80);
                     p_pal->setfloor(piso);
                     p_pal->posicionar(destinoX, destinoY);
-                    break;
+                    p_pal->setAceleracionx(0);
+                    p_pal->setAceleraciony(0);
+                    p_pal->setvelocityx(0);
+                    p_pal->setvelocityy(0);
                 }
+                break;
             }
-            break;
+        }
+        break;
         case Qt::Key_C:
             if (!p_pal->isModoSigilo()) {
                 p_pal->ElegirSprite(1, 0);

@@ -1,5 +1,6 @@
 debug/disparo.o
 debug/enemigos.o
+debug/inicio.o
 debug/iterables.o
 debug/juego.o
 debug/jugador.o
@@ -9,5 +10,6 @@ debug/mapas.o
 debug/qrc_Sprites.o
 debug/moc_disparo.o
 debug/moc_enemigos.o
+debug/moc_inicio.o
 debug/moc_juego.o
 debug/moc_mainwindow.o

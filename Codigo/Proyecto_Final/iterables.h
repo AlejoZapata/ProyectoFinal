@@ -15,7 +15,7 @@ public:
     void ElegirSprite(int x, int tipo);
     void type_object();
 private:
-    QPixmap *Puerta, *Objeto;
+    QPixmap *Puerta, *Objeto, *rendija;
     void setImage();
     int object, scale_p;
     qreal scale_o;

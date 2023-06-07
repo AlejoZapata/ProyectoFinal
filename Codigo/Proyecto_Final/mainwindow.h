@@ -20,6 +20,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void reiniciarJuego();
 private:
     void set_window_size();
     void set_graphiscview_size();
