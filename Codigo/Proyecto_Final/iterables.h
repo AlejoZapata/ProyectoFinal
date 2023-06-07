@@ -17,7 +17,8 @@ public:
 private:
     QPixmap *Puerta, *Objeto;
     void setImage();
-    int object, scale;
+    int object, scale_p;
+    qreal scale_o;
 };
 
 #endif // ITERABLES_H

@@ -34,16 +34,19 @@ public:
     void setvelocityy(int velocityy);
     void setfloor(int piso_act);
     void setmodoSigilo();
+    int getgroundlevel();
+    void setgroundlevel(int pix);
     bool isModoSigilo();
 private:
     QPixmap *Personaje, *Movimiento;
-    qreal velocityY;
-    qreal velocityX;
+    qreal velocityY, velocityX;
+    qreal scale;
     qreal posx, posy, T, delta;
     void cinematica();
     bool isJumping, modoSigilo;
     void jump();
-    int aceleracionx, aceleraciony, scale, currentFloor;
+    int groundLevel;
+    int aceleracionx, aceleraciony, currentFloor;
     std::vector<qreal> groundLevels;
     QTimer *timer;
     void applyGravity();

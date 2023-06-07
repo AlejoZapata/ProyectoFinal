@@ -1,4 +1,5 @@
 #include "juego.h"
+#include "qapplication.h"
 
 Juego::Juego()
 {
@@ -6,6 +7,12 @@ Juego::Juego()
     scale=2;
     crear_Mapa();
     Asignar_posicion_puerta();
+    Asignar_objeto();
+    Asignar_posicion_enemigos();
+    timerEnemigos = new QTimer(this);
+    connect(timerEnemigos, &QTimer::timeout, this, &Juego::actualizarEnemigos);
+    int intervalo = 100;
+    timerEnemigos->start(intervalo);
     set_background(":/Sprites/Fondo prision.jpeg",scale);
 }
 
@@ -13,6 +20,8 @@ Juego::~Juego()
 {
     delete p_pal;
     delete interactuar;
+    delete enemy;
+    delete timerEnemigos;
 }
 
 void Juego::Agregar_Jugador()
@@ -37,15 +46,74 @@ void Juego::Asignar_posicion_puerta()
 
 void Juego::Agregar_Puertas(int origenX, int origenY, int destinoX, int destinoY, int piso)
 {
-    iterables* puerta = new iterables;
-    puerta->setPos(origenX, origenY);
-    puerta->ElegirSprite(0, 0);
-    addItem(puerta);
-    puertas.push_back(puerta);
+    interactuar = new iterables;
+    interactuar->setPos(origenX, origenY);
+    interactuar->ElegirSprite(0, 0);
+    addItem(interactuar);
+    puertas.push_back(interactuar);
     destinos.push_back(QPointF(destinoX, destinoY));
     pisos.push_back(piso);
 }
 
+void Juego::Asignar_posicion_enemigos()
+{
+    Agregar_Enemigos(1115, 165, false);  // Primer enemigo, no se mueve
+    Agregar_Enemigos(755, 415, true);   // Segundo enemigo, se mueve
+    Agregar_Enemigos(60, 415, true);    // Tercer enemigo, se mueve
+    Agregar_Enemigos(245, 425, false);
+}
+
+void Juego::agregarDisparo(Enemigos* enemy, Disparo* disparo)
+{
+    if (enemy->getmovimiento()) {
+        addItem(disparo);
+        disparo->dir_disparo(enemy->getdireccion(), enemy->getmovimiento());
+    }
+    if (p_pal->collidesWithItem(disparo))
+        manejarJugadorAlcanzado();
+    connect(disparo, &Disparo::MatarJugador, this, &Juego::manejarJugadorAlcanzado);
+
+}
+
+void Juego::manejarJugadorAlcanzado()
+{
+    QWidget* widget = QApplication::activeWindow();  // Obtener el puntero al widget principal
+    if (widget) {
+        QMessageBox::StandardButton respuesta = QMessageBox::question(widget, "¡Perdiste!", "Has perdido el juego. ¿Deseas reiniciar?",
+                                                                      QMessageBox::Yes | QMessageBox::No);
+        if (respuesta == QMessageBox::Yes) {
+            QMessageBox::information(nullptr, "Eres una mierda, como pierdes xD", "Augustooo");;
+        } else {
+        }
+    }
+}
+
+
+void Juego::Agregar_Enemigos(int x, int y, bool movimiento)
+{
+    Enemigos* enemy = new Enemigos();
+    enemy->setPos(x, y);
+    addItem(enemy);
+    enemy->Elegirsprite(0);
+    enemy->Puede_moverse(movimiento);
+    cant_enemy.push_back(enemy);
+    connect(enemy, &Enemigos::disparoGenerado, this, &Juego::agregarDisparo);
+}
+
+
+void Juego::actualizarEnemigos()
+{
+    for (auto it = cant_enemy.begin(); it != cant_enemy.end(); ) {
+        Enemigos* enemigo = *it;
+        if (enemigo->Rango_vision(p_pal)) {
+            removeItem(enemigo);
+            it = cant_enemy.erase(it);
+            delete enemigo;
+        } else {
+            ++it;
+        }
+    }
+}
 
 void Juego::crear_Mapa()
 {
@@ -60,6 +128,24 @@ void Juego::crear_Mapa()
             bl_mapa[x][y]->setZValue(1);
         }
     }
+}
+
+void Juego::Asignar_objeto()
+{
+    Agregar_objeto(945, 165, 1);
+    Agregar_objeto(945, 420, 1);
+    Agregar_objeto(150, 420, 0);
+    Agregar_objeto(325, 420, 0);
+}
+
+
+void Juego::Agregar_objeto(int x, int y, int tipo)
+{
+    interactuar = new iterables;
+    interactuar->setPos(x, y);
+    interactuar->ElegirSprite(tipo, 1);
+    addItem(interactuar);
+    objects.push_back(interactuar);
 }
 
 bool Juego::ComprobarColision(QGraphicsItem *item, short dir, int Ancho, int Alto)
@@ -89,18 +175,48 @@ bool Juego::ComprobarColision(QGraphicsItem *item, short dir, int Ancho, int Alt
             x1 = x + Ancho * scale - 1;
             y1 = y;
             break;
+        case 6:
+            x -= impx;
+            x1 = x;
+            y1 = y + Alto * scale - 1;
+            break;
+        case 12:
+            x += Ancho * scale - 1 + impx;
+            x1 = x;
+            y1 = y + Alto * scale - 1;
+            break;
         default:
             break;
     }
-    // Comprobar colisión con los bloques
-    if (bl_mapa[(x / (Ancho*scale))][(y / (Alto*scale))]->is_muro() ||
-        bl_mapa[(x1 / (Ancho*scale))][(y1 / (Alto*scale))]->is_muro()) {
-        p_pal->setAceleracionx(0);
-        p_pal->setAceleraciony(0);
-        p_pal->setvelocityx(0);
-        p_pal->setvelocityy(0);
+
+    // Comprobar colisión con los bloques y objetos
+    if (bl_mapa[(x / (Ancho * scale))][(y / (Alto * scale))]->is_muro() ||
+        bl_mapa[(x1 / (Ancho * scale))][(y1 / (Alto * scale))]->is_muro()) {
         move = false;
     }
+
+    int collisionOffset = 50; // Píxeles de compensación para evitar la colisión
+
+    for (QGraphicsItem* object : objects) {
+        iterables* iterableObject = dynamic_cast<iterables*>(object);
+        if (iterableObject && item->collidesWithItem(iterableObject)) {
+            if (p_pal->isModoSigilo()) {
+                if (p_pal->y() + p_pal->boundingRect().height() <= iterableObject->y()) {
+                     p_pal->setgroundlevel(iterableObject->y() - p_pal->boundingRect().height());
+                     move = true;
+                }
+            }else if (dir == 0 && iterableObject->x() < item->x()) {
+                // Colisión desde la izquierda
+                item->setPos(iterableObject->x() + collisionOffset, item->y());
+                move = false;
+            } else if (dir == 2 && iterableObject->x() > item->x()) {
+                // Colisión desde la derecha
+                item->setPos(iterableObject->x() - collisionOffset, item->y());
+                move = false;
+            }
+        }
+    }
+
     return move;
 }
 
@@ -119,7 +235,7 @@ void Juego::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key())
     {
-        case Qt::Key_W:
+        case Qt::Key_Space:
             p_pal->ActualizarMovimiento(3);
             p_pal->move_jugador(3);
             break;
@@ -128,11 +244,23 @@ void Juego::keyPressEvent(QKeyEvent *event)
             if (ComprobarColision(p_pal, 0, Ancho_bloque_1, Alto_bloque_1)) {
                 p_pal->move_jugador(0);
             }
+            else{
+                p_pal->setAceleracionx(0);
+                p_pal->setAceleraciony(0);
+                p_pal->setvelocityx(0);
+                p_pal->setvelocityy(0);
+            }
             break;
         case Qt::Key_D:
             p_pal->ActualizarMovimiento(2);
             if (ComprobarColision(p_pal, 2, Ancho_bloque_1, Alto_bloque_1)) {
                 p_pal->move_jugador(2);
+            }
+            else{
+                p_pal->setAceleracionx(0);
+                p_pal->setAceleraciony(0);
+                p_pal->setvelocityx(0);
+                p_pal->setvelocityy(0);
             }
             break;
         case Qt::Key_E:
@@ -154,7 +282,6 @@ void Juego::keyPressEvent(QKeyEvent *event)
                 p_pal->ElegirSprite(1, 0);
             }
             p_pal->setmodoSigilo();
-
             if (p_pal->isModoSigilo()) {
                 p_pal->cant_sprites = 2;
             } else {

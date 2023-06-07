@@ -4,7 +4,8 @@ iterables::iterables()
 {
     Puerta = new QPixmap;
     Objeto = new QPixmap;
-    scale=2;
+    scale_p=2;
+    scale_o=1.8;
     Objeto->load(":/Sprites/Objetos.png");
     object=0;
 }
@@ -26,9 +27,9 @@ void iterables::setImage()
 {
     if(object==0){
         Puerta->load(":/Sprites/Puerta.jpeg");
-        setPixmap(Puerta->scaled(Puerta->width() * scale, Puerta->height() * scale));
+        setPixmap(Puerta->scaled(Puerta->width() * scale_p, Puerta->height() * scale_p));
     }
     else if(object==1){
-        setPixmap(Objeto->scaled(Objeto->width() * scale, Objeto->height() * scale));
+        setPixmap(Objeto->scaled(Objeto->width() * scale_o, Objeto->height() * scale_o));
     }
 }

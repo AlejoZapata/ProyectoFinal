@@ -1,0 +1,13 @@
+release/disparo.o
+release/enemigos.o
+release/iterables.o
+release/juego.o
+release/jugador.o
+release/main.o
+release/mainwindow.o
+release/mapas.o
+release/qrc_Sprites.o
+release/moc_disparo.o
+release/moc_enemigos.o
+release/moc_juego.o
+release/moc_mainwindow.o

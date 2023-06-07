@@ -5,5 +5,10 @@
         <file>Muro_nivel_1.png</file>
         <file>Objetos.png</file>
         <file>Puerta.jpeg</file>
+        <file>Enemigos.png</file>
+        <file>Enemigo Derecha.png</file>
+        <file>Enemigo Izquierda.png</file>
+        <file>Disparo Derecha.png</file>
+        <file>Disparo Izquierda.png</file>
     </qresource>
 </RCC>

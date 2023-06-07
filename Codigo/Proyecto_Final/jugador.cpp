@@ -14,8 +14,9 @@ Jugador::Jugador()
     scale=3;
     velocityY = 0;
     velocityX = 0;
-    groundLevels = {170, 425, 370};
+    groundLevels = {170, 425, 520};
     T=0.2;
+    groundLevel = 170;
     currentFloor = 0;
     isJumping = false;
     aceleracionx = 0;
@@ -46,11 +47,10 @@ void Jugador::move_jugador(int type)
     case 2:
         aceleracionx = -190;
         velocityX += impx;
-        //setX(x() + Velocidad_Jugador); // Mover hacia la derecha
         break;
     case 3:
         if (!isJumping){
-            aceleraciony = 190;
+            aceleraciony = 160;
             velocityY -= impy;
             isJumping=true;
         }
@@ -147,6 +147,16 @@ void Jugador::setmodoSigilo()
     modoSigilo = !modoSigilo;
 }
 
+int Jugador::getgroundlevel()
+{
+    return groundLevel;
+}
+
+void Jugador::setgroundlevel(int pix)
+{
+    this->groundLevel=pix;
+}
+
 bool Jugador::isModoSigilo()
 {
     if (modoSigilo) return true;
@@ -167,7 +177,6 @@ void Jugador::setfloor(int piso_act)
     this->currentFloor=piso_act;
 }
 
-
 void Jugador::applyGravity()
 {
     cinematica();
@@ -176,7 +185,7 @@ void Jugador::applyGravity()
         aceleracionx = 0;
     }
 
-    qreal groundLevel = groundLevels[currentFloor]; // Obtener el groundLevel del piso actual
+    groundLevel = groundLevels[currentFloor]; // Obtener el groundLevel del piso actual
     if (y() >= groundLevel) {
         setY(groundLevel);
         velocityY = 0;
