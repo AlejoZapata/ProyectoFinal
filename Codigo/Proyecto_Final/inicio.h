@@ -2,7 +2,6 @@
 #define INICIO_H
 
 #include <QMainWindow>
-
 namespace Ui {
 class inicio;
 }
@@ -20,6 +19,7 @@ private slots:
 
 private:
     Ui::inicio *ui;
+
 };
 
 #endif // INICIO_H
